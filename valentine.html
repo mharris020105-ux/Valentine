@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Valentine Letter</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #ffe6e6;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Bouncing Yayy text */
+@keyframes bounce {0%,100%{transform:translateY(0);}50%{transform:translateY(-20px);}}
+.bounce {animation: bounce 0.6s infinite;}
+
+/* Cat heart trail with sparkle */
+.cat-heart {
+    position: absolute;
+    color: #ff4d6d;
+    font-size: 24px;
+    opacity: 1;
+    text-shadow: 0 0 6px #fff, 0 0 12px #ff99cc;
+    pointer-events: none;
+    z-index: 9999;
+    animation: floatUp 2s linear forwards;
+}
+
+@keyframes floatUp {
+    0% { transform: translateY(0) scale(1) rotate(0deg); opacity: 1; }
+    50% { transform: translateY(-100px) scale(1.2) rotate(45deg); opacity: 0.8; }
+    100% { transform: translateY(-250px) scale(1.3) rotate(90deg); opacity: 0; }
+}
+
+/* Envelope Screen */
+#envelope-container { text-align: center; }
+#envelope { width: 250px; transition: transform 1s; transform-origin: top center; cursor:pointer; }
+.open-envelope { transform: rotateX(180deg); }
+#envelope-container p { margin-top: 10px; color: #ff1a75; font-weight: bold; font-size: 1.2em; }
+
+/* Buttons */
+.buttons-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    gap: 30px;
+    position: relative;
+}
+.btn { width: 80px; cursor: pointer; transition: transform 0.2s; }
+.btn:hover { transform: scale(1.2); }
+
+/* Letter Screen */
+#letter-container {
+    display: none;
+    text-align: center;
+    background: #fff0f5;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    position: relative;
+    z-index: 2;
+}
+@keyframes peekOut {0%{transform:translateY(-200px);opacity:0;} 40%{transform:translateY(-60px);opacity:1;} 100%{transform:translateY(0);opacity:1;}}
+.slide-out { animation: peekOut 1.2s ease forwards; }
+
+.letter-window h1 { color: #ff4d6d; line-height: 1.4em; transition: opacity 0.5s ease; }
+.letter-window img.cat { width: 150px; margin: 20px 0; }
+.final-text { font-size: 1.5em; color: #ff1a75; margin-top: 20px; }
+
+/* Confetti */
+.confetti {
+    position: absolute;
+    width: 10px; height: 10px; z-index: 3;
+    animation-name: fall; animation-timing-function: linear; animation-fill-mode: forwards;
+}
+@keyframes fall { 0%{transform:translateY(-20px) rotate(0deg); opacity:1;} 100%{transform:translateY(100vh) rotate(360deg); opacity:0;} }
+</style>
+</head>
+<body>
+
+<!-- Envelope Screen -->
+<div id="envelope-container">
+    <img src="envelope.jpeg" alt="Envelope" id="envelope">
+    <p>You have a letter! Would you like to open it?</p>
+    <div class="buttons-container">
+        <img src="yes.png" class="btn yes-btn" alt="Yes">
+        <img src="no.png" class="btn no-btn" alt="No">
+    </div>
+</div>
+
+<!-- Letter Screen -->
+<div id="letter-container">
+    <div class="letter-window">
+        <h1 id="letter-title">
+            Happy Valentine's Day Sanjay ❤️<br>
+            Sanjay, will you be my Valentine? 💌
+        </h1>
+        <img src="cat_heart.gif" class="cat" id="letter-cat">
+        <div class="buttons-container" id="letter-buttons">
+            <img src="yes.png" class="btn yes-btn" alt="Yes">
+            <img src="no.png" class="btn no-btn" alt="No">
+        </div>
+        <p id="final-text" class="final-text" style="display: none">
+            <strong>I Love You ❤️</strong>
+        </p>
+    </div>
+</div>
+
+<script>
+const envelope = document.getElementById('envelope');
+const envelopeContainer = document.getElementById('envelope-container');
+const letterContainer = document.getElementById('letter-container');
+const finalText = document.getElementById('final-text');
+const letterCat = document.getElementById('letter-cat');
+const letterTitle = document.getElementById('letter-title');
+const yesBtns = document.querySelectorAll('.yes-btn'); 
+const noBtns = document.querySelectorAll('.no-btn');
+
+let envelopeOpened = false;
+let catDanced = false;
+let heartInterval;
+
+// Background hearts
+heartInterval = setInterval(() => {
+    for (let i=0;i<7;i++){
+        const heart = document.createElement('div');
+        heart.className='cat-heart';
+        heart.style.left = Math.random()*window.innerWidth+'px';
+        heart.style.top = Math.random()*window.innerHeight+'px';
+        heart.style.fontSize=(16+Math.random()*30)+'px';
+        heart.style.animationDuration=(4+Math.random()*6)+'s';
+        heart.innerHTML='❤️';
+        document.body.appendChild(heart);
+        setTimeout(()=>heart.remove(),12000);
+    }
+}, 300);
+
+// Confetti
+function createConfetti() {
+    for(let i=0;i<250;i++){
+        const confetti = document.createElement('div');
+        confetti.className='confetti';
+        confetti.style.left = Math.random()*window.innerWidth+'px';
+        confetti.style.top = '-20px';
+        confetti.style.width=5+Math.random()*10+'px';
+        confetti.style.height=5+Math.random()*10+'px';
+        confetti.style.backgroundColor=`hsl(${Math.random()*360},100%,50%)`;
+        confetti.style.animationDuration=(3+Math.random()*3)+'s';
+        document.body.appendChild(confetti);
+        setTimeout(()=>confetti.remove(),5000+Math.random()*2000);
+    }
+}
+
+// Cat heart trail from paw
+let catHeartInterval;
+function createCatHearts() {
+    const heart = document.createElement('div');
+    heart.className='cat-heart';
+    heart.innerHTML='❤️';
+
+    const catRect = letterCat.getBoundingClientRect();
+    const scrollTop = window.scrollY || document.documentElement.scrollTop;
+    const scrollLeft = window.scrollX || document.documentElement.scrollLeft;
+
+    heart.style.left = (catRect.left + scrollLeft + catRect.width/2 - 12 + (Math.random()*20-10)) + 'px';
+    heart.style.top = (catRect.top + scrollTop + catRect.height - 10) + 'px';
+
+    document.body.appendChild(heart);
+    setTimeout(()=>heart.remove(),2000);
+}
+
+function startCatHeartTrail() {
+    if(catHeartInterval) clearInterval(catHeartInterval);
+    catHeartInterval = setInterval(createCatHearts, 400);
+}
+
+// Yes button logic
+yesBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+        if (!envelopeOpened) {
+            envelope.classList.add('open-envelope');
+            setTimeout(()=>{
+                envelopeContainer.style.display='none';
+                letterContainer.style.display='block';
+                letterContainer.classList.add('slide-out');
+                envelopeOpened = true;
+            },1000);
+        } else if (!catDanced) {
+            letterCat.src = "cat_dance.gif";
+
+            // Start heart trail after cat loads
+            letterCat.onload = () => {
+                catDanced = true;
+                letterTitle.innerHTML = "Yayy 🎉";
+                letterTitle.classList.add('bounce');
+                finalText.style.display = "block";
+
+                // stop background hearts
+                clearInterval(heartInterval);
+
+                // confetti
+                for(let i=0;i<6;i++){
+                    setTimeout(createConfetti,i*500);
+                }
+
+                // start continuous cat heart trail
+                startCatHeartTrail();
+            };
+        }
+    });
+});
+
+// No button dodge
+noBtns.forEach(noBtn=>{
+    noBtn.style.position='relative';
+    document.addEventListener('mousemove',e=>{
+        const rect=noBtn.getBoundingClientRect();
+        const distance = Math.hypot(e.clientX-(rect.left+rect.width/2),
+                                    e.clientY-(rect.top+rect.height/2));
+        if(distance<100){
+            const maxX = window.innerWidth - rect.width -10;
+            const maxY = window.innerHeight - rect.height -10;
+            const randX = Math.random()*maxX - rect.left;
+            const randY = Math.random()*maxY - rect.top;
+            noBtn.style.transform=`translate(${randX}px,${randY}px)`;
+        }
+    });
+});
+</script>
+</body>
+</html>
